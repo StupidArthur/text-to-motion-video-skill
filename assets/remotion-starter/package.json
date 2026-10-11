@@ -1,0 +1,24 @@
+{
+  "name": "text-to-motion-starter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deterministic JSON DSL to SVG explainer videos using Remotion",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Main out/video.mp4 --codec=h264 --pixel-format=yuv420p",
+    "storyboard": "node scripts/storyboard.mjs",
+    "compositions": "remotion compositions src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.528",
+    "remotion": "4.0.528",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.4.5"
+  }
+}
