@@ -45,6 +45,10 @@ jobs:
       - name: Ensure headless rendering browser
         working-directory: assets/remotion-starter
         run: npx remotion browser ensure
+      - name: Install FFmpeg and ffprobe
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ffmpeg
       - name: Render storyboard and H.264 MP4
         working-directory: assets/remotion-starter
         run: |
