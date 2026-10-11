@@ -180,8 +180,8 @@ export function poseAt(
     const backDefault={x:-27-gait*35,y:-5};
     const frontTarget=forwardPlant?interpolatePoint(frontDefault,toLocal(forwardPlant,root),gaitStrength):frontDefault;
     const backTarget=backPlant?interpolatePoint(backDefault,toLocal(backPlant,root),gaitStrength):backDefault;
-    frontLeg = solveIK({x:27,y:-108},frontTarget,85,88,1);
-    backLeg = solveIK({x:-27,y:-108},backTarget,85,88,-1);
+    frontLeg = solveIK({x:27,y:-108},frontTarget,68,68,-1);
+    backLeg = solveIK({x:-27,y:-108},backTarget,68,68,1);
   } else {
     const frontShoulder = {x:66,y:-110};
     const neutral = {x:85 + gait*27,y:-11};

@@ -67,3 +67,12 @@ test('planted running feet stay fixed during stance frames',()=>{
   }
   for(const item of x)assert.ok(Math.hypot(item.x-x[0].x,item.y-x[0].y)<0.005);
 });
+
+test('human idle knees bend outward rather than crossing',()=>{
+  const scene=demo.scenes.find(s=>s.id==='greeting');
+  const girl=scene.characters.find(c=>c.asset==='girl');
+  const asset=demo.characterAssets.find(a=>a.id==='girl');
+  const pose=poseAt(girl,asset,0);
+  assert.ok(pose.frontLeg.mid.x>pose.frontLeg.root.x);
+  assert.ok(pose.backLeg.mid.x<pose.backLeg.root.x);
+});
