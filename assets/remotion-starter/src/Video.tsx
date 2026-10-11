@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {animationAt} from './animation';
+import {DrawCharacter} from './Characters';
+import {mix, smooth} from './rig';
 import type {Scene, VideoElement, VideoSpec} from './types';
 
 const DEFAULT_FONT = '"Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
@@ -69,10 +71,33 @@ const AnimatedElement: React.FC<{element: VideoElement; frame: number}> = ({elem
 const SceneFrame: React.FC<{scene: Scene; spec: VideoSpec}> = ({scene, spec}) => {
   const frame = useCurrentFrame();
   const {width, height} = spec.meta;
+  const camera = scene.camera ?? [];
+  const interpolated = (prop: 'x' | 'y' | 'zoom', fallback: number): number => {
+    const keys = camera.filter(k => typeof k[prop] === 'number');
+    if (!keys.length) return fallback;
+    if (frame <= keys[0].frame) return keys[0][prop] ?? fallback;
+    for (let i=1;i<keys.length;i++) if(frame<=keys[i].frame) {
+      const p=smooth((frame-keys[i-1].frame)/(keys[i].frame-keys[i-1].frame));
+      return mix(keys[i-1][prop] ?? fallback,keys[i][prop] ?? fallback,p);
+    }
+    return keys[keys.length-1][prop] ?? fallback;
+  };
+  const zoom = interpolated('zoom', 1);
+  const cameraX = interpolated('x',width/2);
+  const cameraY = interpolated('y',height/2);
+  const transform = `translate(${width/2} ${height/2}) scale(${zoom}) translate(${-cameraX} ${-cameraY})`;
+  const assets = new Map((spec.characterAssets ?? []).map(asset=>[asset.id,asset]));
   return <AbsoluteFill style={{backgroundColor: scene.background ?? spec.meta.background ?? '#090F1D'}}>
     <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet" style={{display: 'block', overflow: 'hidden'}}>
-      {scene.elements.map((element) => <AnimatedElement key={element.id} element={element} frame={frame} />)}
+      <g transform={transform}>
+        {scene.elements.map((element) => <AnimatedElement key={element.id} element={element} frame={frame} />)}
+        {(scene.characters ?? []).map(character => {
+          const asset = assets.get(character.asset);
+          return asset ? <DrawCharacter key={character.id} character={character} asset={asset}
+            frame={frame} interactions={scene.interactions ?? []}/> : null;
+        })}
+      </g>
     </svg>
     {scene.audio ? <Audio src={staticFile(scene.audio.file)} volume={scene.audio.volume ?? 1} /> : null}
   </AbsoluteFill>;

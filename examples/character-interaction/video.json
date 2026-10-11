@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "title": "Girl and Puppy — Deterministic 2D Character Animation",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#B9EAF2"
+  },
+  "characterAssets": [
+    {
+      "id": "girl",
+      "kind": "human",
+      "colors": {
+        "body": "#8062CA",
+        "skin": "#F0B487",
+        "accent": "#49386C",
+        "outline": "#24354B"
+      }
+    },
+    {
+      "id": "puppy",
+      "kind": "dog",
+      "colors": {
+        "body": "#C88953",
+        "skin": "#E6B982",
+        "accent": "#885733",
+        "outline": "#3C302D"
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "greeting",
+      "durationFrames": 120,
+      "background": "#B9EAF2",
+      "elements": [
+        {
+          "id": "sky",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fill": "#B9EAF2",
+          "radius": 0
+        },
+        {
+          "id": "grass",
+          "type": "rect",
+          "x": 0,
+          "y": 795,
+          "width": 1920,
+          "height": 285,
+          "fill": "#7CBF80",
+          "radius": 0
+        },
+        {
+          "id": "path",
+          "type": "rect",
+          "x": 0,
+          "y": 890,
+          "width": 1920,
+          "height": 190,
+          "fill": "#E8D6B8",
+          "radius": 0
+        },
+        {
+          "id": "cloud",
+          "type": "rect",
+          "x": 155,
+          "y": 95,
+          "width": 220,
+          "height": 75,
+          "fill": "#FFFFFF",
+          "radius": 40
+        },
+        {
+          "id": "cloud2",
+          "type": "rect",
+          "x": 1415,
+          "y": 140,
+          "width": 300,
+          "height": 70,
+          "fill": "#FFFFFF",
+          "radius": 35
+        },
+        {
+          "id": "tree-trunk",
+          "type": "rect",
+          "x": 1785,
+          "y": 470,
+          "width": 42,
+          "height": 350,
+          "fill": "#876448",
+          "radius": 15
+        },
+        {
+          "id": "tree-top",
+          "type": "circle",
+          "x": 1805,
+          "y": 365,
+          "r": 190,
+          "fill": "#60A36C"
+        },
+        {
+          "id": "caption",
+          "type": "text",
+          "x": 140,
+          "y": 75,
+          "width": 1640,
+          "height": 130,
+          "text": "看，小女孩正在招呼小狗",
+          "fontSize": 70,
+          "fill": "#17324D",
+          "fontWeight": 750
+        }
+      ],
+      "characters": [
+        {
+          "id": "girl",
+          "asset": "girl",
+          "x": 700,
+          "y": 900,
+          "scale": 1.15,
+          "facing": 1,
+          "actions": [
+            {
+              "name": "wave",
+              "from": 12,
+              "to": 111
+            },
+            {
+              "name": "blink",
+              "from": 64,
+              "to": 76
+            }
+          ]
+        },
+        {
+          "id": "puppy",
+          "asset": "puppy",
+          "x": 1650,
+          "y": 900,
+          "scale": 1.15,
+          "facing": -1,
+          "actions": [
+            {
+              "name": "tailWag",
+              "from": 0,
+              "to": 117
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "running",
+      "durationFrames": 140,
+      "background": "#B9EAF2",
+      "elements": [
+        {
+          "id": "sky",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fill": "#B9EAF2",
+          "radius": 0
+        },
+        {
+          "id": "grass",
+          "type": "rect",
+          "x": 0,
+          "y": 795,
+          "width": 1920,
+          "height": 285,
+          "fill": "#7CBF80",
+          "radius": 0
+        },
+        {
+          "id": "path",
+          "type": "rect",
+          "x": 0,
+          "y": 890,
+          "width": 1920,
+          "height": 190,
+          "fill": "#E8D6B8",
+          "radius": 0
+        },
+        {
+          "id": "cloud",
+          "type": "rect",
+          "x": 155,
+          "y": 95,
+          "width": 220,
+          "height": 75,
+          "fill": "#FFFFFF",
+          "radius": 40
+        },
+        {
+          "id": "cloud2",
+          "type": "rect",
+          "x": 1415,
+          "y": 140,
+          "width": 300,
+          "height": 70,
+          "fill": "#FFFFFF",
+          "radius": 35
+        },
+        {
+          "id": "tree-trunk",
+          "type": "rect",
+          "x": 1785,
+          "y": 470,
+          "width": 42,
+          "height": 350,
+          "fill": "#876448",
+          "radius": 15
+        },
+        {
+          "id": "tree-top",
+          "type": "circle",
+          "x": 1805,
+          "y": 365,
+          "r": 190,
+          "fill": "#60A36C"
+        },
+        {
+          "id": "caption",
+          "type": "text",
+          "x": 140,
+          "y": 75,
+          "width": 1640,
+          "height": 130,
+          "text": "小狗开心地跑过来",
+          "fontSize": 70,
+          "fill": "#17324D",
+          "fontWeight": 750
+        }
+      ],
+      "characters": [
+        {
+          "id": "girl",
+          "asset": "girl",
+          "x": 700,
+          "y": 900,
+          "scale": 1.15,
+          "facing": 1,
+          "actions": [
+            {
+              "name": "wave",
+              "from": 0,
+              "to": 111
+            }
+          ]
+        },
+        {
+          "id": "puppy",
+          "asset": "puppy",
+          "x": 1650,
+          "y": 900,
+          "scale": 1.15,
+          "facing": -1,
+          "actions": [
+            {
+              "name": "run",
+              "from": 5,
+              "to": 128
+            },
+            {
+              "name": "tailWag",
+              "from": 0,
+              "to": 137
+            }
+          ],
+          "motion": [
+            {
+              "frame": 0,
+              "x": 1650,
+              "y": 900
+            },
+            {
+              "frame": 126,
+              "x": 1150,
+              "y": 900
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "high-five",
+      "durationFrames": 150,
+      "background": "#B9EAF2",
+      "elements": [
+        {
+          "id": "sky",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fill": "#B9EAF2",
+          "radius": 0
+        },
+        {
+          "id": "grass",
+          "type": "rect",
+          "x": 0,
+          "y": 795,
+          "width": 1920,
+          "height": 285,
+          "fill": "#7CBF80",
+          "radius": 0
+        },
+        {
+          "id": "path",
+          "type": "rect",
+          "x": 0,
+          "y": 890,
+          "width": 1920,
+          "height": 190,
+          "fill": "#E8D6B8",
+          "radius": 0
+        },
+        {
+          "id": "cloud",
+          "type": "rect",
+          "x": 155,
+          "y": 95,
+          "width": 220,
+          "height": 75,
+          "fill": "#FFFFFF",
+          "radius": 40
+        },
+        {
+          "id": "cloud2",
+          "type": "rect",
+          "x": 1415,
+          "y": 140,
+          "width": 300,
+          "height": 70,
+          "fill": "#FFFFFF",
+          "radius": 35
+        },
+        {
+          "id": "tree-trunk",
+          "type": "rect",
+          "x": 1785,
+          "y": 470,
+          "width": 42,
+          "height": 350,
+          "fill": "#876448",
+          "radius": 15
+        },
+        {
+          "id": "tree-top",
+          "type": "circle",
+          "x": 1805,
+          "y": 365,
+          "r": 190,
+          "fill": "#60A36C"
+        },
+        {
+          "id": "caption",
+          "type": "text",
+          "x": 140,
+          "y": 75,
+          "width": 1640,
+          "height": 130,
+          "text": "一个默契的击掌！",
+          "fontSize": 70,
+          "fill": "#17324D",
+          "fontWeight": 750
+        }
+      ],
+      "characters": [
+        {
+          "id": "girl",
+          "asset": "girl",
+          "x": 700,
+          "y": 900,
+          "scale": 1.15,
+          "facing": 1,
+          "actions": [
+            {
+              "name": "reach",
+              "from": 20,
+              "to": 136
+            },
+            {
+              "name": "blink",
+              "from": 102,
+              "to": 113
+            }
+          ]
+        },
+        {
+          "id": "puppy",
+          "asset": "puppy",
+          "x": 1150,
+          "y": 900,
+          "scale": 1.15,
+          "facing": -1,
+          "actions": [
+            {
+              "name": "sit",
+              "from": 7,
+              "to": 143
+            },
+            {
+              "name": "pawRaise",
+              "from": 23,
+              "to": 135
+            },
+            {
+              "name": "tailWag",
+              "from": 0,
+              "to": 147
+            }
+          ]
+        }
+      ],
+      "interactions": [
+        {
+          "id": "contact",
+          "type": "highFive",
+          "actors": [
+            "girl",
+            "puppy"
+          ],
+          "frame": 98,
+          "holdFrames": 12,
+          "target": {
+            "x": 912,
+            "y": 650
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "durationFrames": 130,
+      "background": "#B9EAF2",
+      "elements": [
+        {
+          "id": "sky",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fill": "#B9EAF2",
+          "radius": 0
+        },
+        {
+          "id": "grass",
+          "type": "rect",
+          "x": 0,
+          "y": 795,
+          "width": 1920,
+          "height": 285,
+          "fill": "#7CBF80",
+          "radius": 0
+        },
+        {
+          "id": "path",
+          "type": "rect",
+          "x": 0,
+          "y": 890,
+          "width": 1920,
+          "height": 190,
+          "fill": "#E8D6B8",
+          "radius": 0
+        },
+        {
+          "id": "cloud",
+          "type": "rect",
+          "x": 155,
+          "y": 95,
+          "width": 220,
+          "height": 75,
+          "fill": "#FFFFFF",
+          "radius": 40
+        },
+        {
+          "id": "cloud2",
+          "type": "rect",
+          "x": 1415,
+          "y": 140,
+          "width": 300,
+          "height": 70,
+          "fill": "#FFFFFF",
+          "radius": 35
+        },
+        {
+          "id": "tree-trunk",
+          "type": "rect",
+          "x": 1785,
+          "y": 470,
+          "width": 42,
+          "height": 350,
+          "fill": "#876448",
+          "radius": 15
+        },
+        {
+          "id": "tree-top",
+          "type": "circle",
+          "x": 1805,
+          "y": 365,
+          "r": 190,
+          "fill": "#60A36C"
+        },
+        {
+          "id": "caption",
+          "type": "text",
+          "x": 140,
+          "y": 75,
+          "width": 1640,
+          "height": 130,
+          "text": "用代码，讲一个有生命力的故事",
+          "fontSize": 70,
+          "fill": "#17324D",
+          "fontWeight": 750
+        }
+      ],
+      "characters": [
+        {
+          "id": "girl",
+          "asset": "girl",
+          "x": 700,
+          "y": 900,
+          "scale": 1.15,
+          "facing": 1,
+          "actions": [
+            {
+              "name": "wave",
+              "from": 0,
+              "to": 113
+            }
+          ]
+        },
+        {
+          "id": "puppy",
+          "asset": "puppy",
+          "x": 1150,
+          "y": 900,
+          "scale": 1.15,
+          "facing": -1,
+          "actions": [
+            {
+              "name": "sit",
+              "from": 0,
+              "to": 128
+            },
+            {
+              "name": "tailWag",
+              "from": 0,
+              "to": 129
+            }
+          ]
+        }
+      ],
+      "camera": [
+        {
+          "frame": 0,
+          "x": 960,
+          "y": 520,
+          "zoom": 1
+        },
+        {
+          "frame": 129,
+          "x": 960,
+          "y": 520,
+          "zoom": 1.13
+        }
+      ]
+    }
+  ]
+}

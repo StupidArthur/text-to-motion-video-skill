@@ -1,0 +1,439 @@
+{
+  "meta": {
+    "title": "让文字变成视频 — Code Agent Demo",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#0A1021"
+  },
+  "scenes": [
+    {
+      "id": "intro",
+      "durationFrames": 90,
+      "background": "#0A1021",
+      "elements": [
+        {
+          "id": "accent-circle",
+          "type": "circle",
+          "x": 1600,
+          "y": 275,
+          "r": 150,
+          "fill": "#4F46E5",
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 0,
+              "scale": 0.7,
+              "dy": 45
+            },
+            {
+              "frame": 20,
+              "opacity": 1,
+              "scale": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "intro-title",
+          "type": "text",
+          "x": 140,
+          "y": 350,
+          "width": 1510,
+          "height": 168,
+          "text": "让文字变成视频",
+          "fontSize": 116,
+          "fontWeight": 800,
+          "fill": "#F8FAFC",
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 0,
+              "dy": 55
+            },
+            {
+              "frame": 22,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "intro-subtitle",
+          "type": "text",
+          "x": 146,
+          "y": 560,
+          "width": 1360,
+          "height": 105,
+          "text": "Text → Scene DSL → SVG → MP4",
+          "fontSize": 54,
+          "fontWeight": 500,
+          "fill": "#A5B4FC",
+          "motion": [
+            {
+              "frame": 10,
+              "opacity": 0,
+              "dy": 24
+            },
+            {
+              "frame": 28,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "intro-footer",
+          "type": "text",
+          "x": 146,
+          "y": 900,
+          "width": 1450,
+          "height": 64,
+          "text": "纯文本 Code Agent · 程序化逐帧渲染",
+          "fontSize": 39,
+          "fontWeight": 500,
+          "fill": "#94A3B8"
+        }
+      ]
+    },
+    {
+      "id": "pipeline",
+      "durationFrames": 120,
+      "background": "#111B30",
+      "elements": [
+        {
+          "id": "pipeline-title",
+          "type": "text",
+          "x": 140,
+          "y": 145,
+          "width": 1640,
+          "height": 110,
+          "text": "三步生成动画",
+          "fontSize": 78,
+          "fontWeight": 750,
+          "fill": "#F8FAFC",
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 0,
+              "dy": 25
+            },
+            {
+              "frame": 15,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "box-1",
+          "type": "rect",
+          "x": 145,
+          "y": 400,
+          "width": 440,
+          "height": 230,
+          "radius": 30,
+          "fill": "#4F46E5",
+          "motion": [
+            {
+              "frame": 5,
+              "opacity": 0,
+              "scale": 0.8
+            },
+            {
+              "frame": 25,
+              "opacity": 1,
+              "scale": 1
+            }
+          ]
+        },
+        {
+          "id": "text-1",
+          "type": "text",
+          "x": 175,
+          "y": 454,
+          "width": 380,
+          "height": 120,
+          "text": "文本模型",
+          "fontSize": 70,
+          "fontWeight": 720,
+          "align": "center",
+          "verticalAlign": "middle",
+          "fill": "#FFFFFF",
+          "motion": [
+            {
+              "frame": 12,
+              "opacity": 0
+            },
+            {
+              "frame": 28,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "id": "arrow-1",
+          "type": "line",
+          "x": 615,
+          "y": 515,
+          "x2": 730,
+          "y2": 515,
+          "stroke": "#7DD3FC",
+          "strokeWidth": 13,
+          "arrowHead": true,
+          "motion": [
+            {
+              "frame": 26,
+              "opacity": 0
+            },
+            {
+              "frame": 40,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "id": "box-2",
+          "type": "rect",
+          "x": 765,
+          "y": 400,
+          "width": 440,
+          "height": 230,
+          "radius": 30,
+          "fill": "#0E7490",
+          "motion": [
+            {
+              "frame": 28,
+              "opacity": 0,
+              "scale": 0.8
+            },
+            {
+              "frame": 46,
+              "opacity": 1,
+              "scale": 1
+            }
+          ]
+        },
+        {
+          "id": "text-2",
+          "type": "text",
+          "x": 795,
+          "y": 454,
+          "width": 380,
+          "height": 120,
+          "text": "场景 DSL",
+          "fontSize": 68,
+          "fontWeight": 720,
+          "align": "center",
+          "verticalAlign": "middle",
+          "fill": "#FFFFFF",
+          "motion": [
+            {
+              "frame": 36,
+              "opacity": 0
+            },
+            {
+              "frame": 52,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "id": "arrow-2",
+          "type": "line",
+          "x": 1235,
+          "y": 515,
+          "x2": 1350,
+          "y2": 515,
+          "stroke": "#7DD3FC",
+          "strokeWidth": 13,
+          "arrowHead": true,
+          "motion": [
+            {
+              "frame": 55,
+              "opacity": 0
+            },
+            {
+              "frame": 69,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "id": "box-3",
+          "type": "rect",
+          "x": 1385,
+          "y": 400,
+          "width": 390,
+          "height": 230,
+          "radius": 30,
+          "fill": "#047857",
+          "motion": [
+            {
+              "frame": 59,
+              "opacity": 0,
+              "scale": 0.8
+            },
+            {
+              "frame": 80,
+              "opacity": 1,
+              "scale": 1
+            }
+          ]
+        },
+        {
+          "id": "text-3",
+          "type": "text",
+          "x": 1410,
+          "y": 454,
+          "width": 340,
+          "height": 120,
+          "text": "Remotion",
+          "fontSize": 65,
+          "fontWeight": 720,
+          "align": "center",
+          "verticalAlign": "middle",
+          "fill": "#FFFFFF",
+          "motion": [
+            {
+              "frame": 66,
+              "opacity": 0
+            },
+            {
+              "frame": 83,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "id": "pipeline-footer",
+          "type": "text",
+          "x": 150,
+          "y": 840,
+          "width": 1630,
+          "height": 83,
+          "text": "从结构化描述到可重复渲染的每一帧",
+          "fontSize": 50,
+          "align": "center",
+          "fill": "#CBD5E1",
+          "motion": [
+            {
+              "frame": 82,
+              "opacity": 0,
+              "dy": 20
+            },
+            {
+              "frame": 98,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outro",
+      "durationFrames": 150,
+      "background": "#0A1021",
+      "elements": [
+        {
+          "id": "outro-ring",
+          "type": "circle",
+          "x": 1620,
+          "y": 535,
+          "r": 190,
+          "fill": "none",
+          "stroke": "#34D399",
+          "strokeWidth": 24,
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 0,
+              "scale": 0.5,
+              "rotate": -40
+            },
+            {
+              "frame": 42,
+              "opacity": 1,
+              "scale": 1,
+              "rotate": 0
+            },
+            {
+              "frame": 149,
+              "rotate": 25
+            }
+          ]
+        },
+        {
+          "id": "outro-title",
+          "type": "text",
+          "x": 170,
+          "y": 310,
+          "width": 1250,
+          "height": 190,
+          "text": "逐帧渲染",
+          "fontSize": 126,
+          "fontWeight": 850,
+          "fill": "#F8FAFC",
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 0,
+              "dy": 40
+            },
+            {
+              "frame": 25,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "outro-subtitle",
+          "type": "text",
+          "x": 178,
+          "y": 540,
+          "width": 1200,
+          "height": 100,
+          "text": "稳定、可编辑、可复现",
+          "fontSize": 62,
+          "fontWeight": 570,
+          "fill": "#6EE7B7",
+          "motion": [
+            {
+              "frame": 22,
+              "opacity": 0,
+              "dy": 25
+            },
+            {
+              "frame": 45,
+              "opacity": 1,
+              "dy": 0
+            }
+          ]
+        },
+        {
+          "id": "outro-footer",
+          "type": "text",
+          "x": 180,
+          "y": 860,
+          "width": 1500,
+          "height": 80,
+          "text": "导出 H.264 MP4  |  保留完整源文件",
+          "fontSize": 44,
+          "fill": "#94A3B8",
+          "motion": [
+            {
+              "frame": 45,
+              "opacity": 0
+            },
+            {
+              "frame": 65,
+              "opacity": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -119,3 +119,44 @@ python3 "$SKILL_ROOT/scripts/check_frames.py" out/storyboard # optional Pillow
 npm run render       # out/video.mp4
 python3 "$SKILL_ROOT/scripts/check_video.py" video.json out/video.mp4  # optional ffprobe
 ```
+
+## V2 — animated people, animals, and scripted interactions
+
+The bundled starter now supports both **V1 motion graphics** and **V2 procedural
+cartoon characters**. Before authoring a character story:
+
+1. Read the V2 section of `references/SCENE_DSL.md`. Define `characterAssets` at
+   the document root (`human` or `dog`), then character instances inside scenes.
+2. Create a **character bible** (names, species, palette, sizes, facing).
+   Reuse those definitions across all scenes to keep identities consistent.
+3. Break the narrative into beats: establish → initiate → approach → react → contact → resolve.
+   Each action takes scene-local frames and does not run in wall-clock time.
+4. Put `characters[].actions` (`walk`, `run`, `wave`, `sit`, `reach`,
+   `pawRaise`, `blink`, `headTurn`, `tailWag`) and `characters[].motion` into
+   scenes; use `interactions[]` for exact hand/paw contact points.
+5. For high-five interactions specify both actor IDs, the contact frame and a
+   reachable shared world-space target. Run validation and `npm run test:rig`
+   before visual inspection. The numeric test verifies contact precision.
+6. Use `camera` keyframes for restrained pans/zooms. Avoid camera motion that
+   hides the interacting limbs. Extract the contact frame with Remotion still.
+7. Render and review at scene boundaries and key action frames. If the agent is
+   text-only, report that manual visual review is pending rather than inventing it.
+
+Starter V2 example: an 18-second scene with a girl waving to a dog, the dog
+running and sitting, and a two-character high-five. V1-only examples are kept
+in `examples/v1-video.json` and can still be rendered by replacing video.json
+with the V1 example. For an immediate character demo:
+
+```bash
+cd assets/remotion-starter
+npm install
+npm run test:rig
+npm run storyboard
+npm run render
+```
+
+**Current scope:** the included rigs are stylized procedural SVG humanoid and
+puppy characters. This is not a photorealistic video model or a general importer
+for arbitrary PNG/video/Lottie rigs. MP4 interactions are scripted, not
+interactive with the viewer at playback time. Full 2D rig import, user-defined
+skeletons, automatic lip sync and physics require subsequent features.

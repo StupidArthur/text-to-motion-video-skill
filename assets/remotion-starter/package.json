@@ -8,7 +8,9 @@
     "render": "remotion render src/index.ts Main out/video.mp4 --codec=h264 --pixel-format=yuv420p",
     "storyboard": "node scripts/storyboard.mjs",
     "compositions": "remotion compositions src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:rig": "tsc --target ES2020 --module commonjs --strict --skipLibCheck --outDir .tmp-rig src/types.ts src/rig.ts && node --test scripts/test-rig.cjs",
+    "test:scene": "python3 ../../scripts/validate_scene.py video.json"
   },
   "dependencies": {
     "@remotion/cli": "4.0.528",

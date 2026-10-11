@@ -52,3 +52,35 @@ Requirements: Node.js 20+, npm, Python 3.10+, Chromium environment supported by 
 - Remotion fundamentals: https://www.remotion.dev/docs/the-fundamentals
 - Remotion CLI: https://www.remotion.dev/docs/cli
 - Remotion still frame option: https://www.remotion.dev/docs/options/frame
+
+## V2: character animation (new)
+
+The default starter demo is now an **18-second cartoon character story**:
+Girl waves → puppy runs → puppy sits → hand/paw high-five → closing camera zoom.
+The V1 pure infographic example remains available at `examples/v1-video.json`.
+
+Key additions: `characterAssets`, per-scene `characters`, timed `actions`,
+shared world-space `highFive` targets, deterministic two-link inverse kinematics,
+and `camera` keyframes. See `references/SCENE_DSL.md` for the exact supported
+schema, `src/rig.ts` for the pure numerical motion engine, and `src/Characters.tsx`
+for the rendered procedural characters.
+
+### Test and render V2
+
+```bash
+python3 scripts/validate_scene.py assets/remotion-starter/video.json
+python3 -m unittest discover -s scripts -p test_skill.py
+cd assets/remotion-starter
+npm run test:rig          # TypeScript compile + pure motion tests, no React browser needed
+npm install              # dependencies for Remotion
+npm run typecheck
+npm run storyboard        # render sampled frames, browser needed
+npm run render            # out/video.mp4
+```
+
+**Limitations:** A text-only agent can author stylized characters and scripted
+interactions, but not automatically create convincing photoreal humans, animals,
+or acting performances. The currently implemented rigs are code-generated SVG,
+not a general imported-skeleton format. This package has numerical and structural
+tests; rendering and artistic QA must be performed in an environment with npm
+and a Chromium-compatible browser.

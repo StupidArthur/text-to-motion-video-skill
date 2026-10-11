@@ -8,7 +8,7 @@ from pathlib import Path
 from validate_scene import validate
 
 SKILL = Path(__file__).resolve().parents[1]
-DEMO = SKILL / "assets" / "remotion-starter" / "video.json"
+DEMO = SKILL / "examples" / "v1-video.json"
 
 
 class ValidationTests(unittest.TestCase):
