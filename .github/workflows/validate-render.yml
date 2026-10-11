@@ -45,10 +45,11 @@ jobs:
       - name: Ensure headless rendering browser
         working-directory: assets/remotion-starter
         run: npx remotion browser ensure
-      - name: Install FFmpeg and ffprobe
+      - name: Install FFmpeg and CJK fonts
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          fc-match "Noto Sans CJK SC"
       - name: Render storyboard and H.264 MP4
         working-directory: assets/remotion-starter
         run: |
