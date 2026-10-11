@@ -205,7 +205,7 @@ def validate(document, video_path):
     if not isinstance(document, dict):
         ch.error("$", "JSON root must be an object")
         return ch
-    top_unknown = set(document) - {"meta", "scenes", "characterAssets"}
+    top_unknown = set(document) - {"meta", "scenes", "characterAssets", "propAssets"}
     if top_unknown:
         ch.error("$", f"unsupported root fields: {', '.join(sorted(top_unknown))}")
     meta = document.get("meta")
@@ -237,7 +237,7 @@ def validate(document, video_path):
         if not isinstance(scene, dict):
             ch.error(here, "scene must be an object")
             continue
-        scene_unknown = set(scene) - {"id", "durationFrames", "background", "audio", "elements", "characters", "interactions", "camera"}
+        scene_unknown = set(scene) - {"id", "durationFrames", "background", "audio", "elements", "characters", "interactions", "camera", "props", "attachments"}
         if scene_unknown:
             ch.error(here, f"unsupported scene fields: {', '.join(sorted(scene_unknown))}")
         scene_id = scene.get("id")
@@ -270,7 +270,7 @@ def validate(document, video_path):
         if not elements and not scene.get("characters"):
             ch.warn(here, "scene contains zero elements and characters (may be intentional)")
     from validate_characters import check_v2
-    check_v2(ch, document)
+    check_v2(ch, document, video_path)
     if is_int(fps) and fps > 0:
         print(f"VIDEO: {len(scenes)} scenes, {total_frames} frames, {total_frames / fps:.2f}s, {width}x{height} @ {fps}fps")
     return ch

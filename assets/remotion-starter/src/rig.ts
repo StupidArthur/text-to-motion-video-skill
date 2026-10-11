@@ -45,7 +45,7 @@ export function solveIK(origin: Point, target: Point, upper: number, lower: numb
 }
 
 /** Explicit frame keyframes avoid CSS / wall-clock based motion. */
-export function rootAt(char: CharacterInstance, frame: number): RootPose {
+function rootBaseAt(char: CharacterInstance, frame: number): RootPose {
   const defaults = {x: char.x, y: char.y, scale: char.scale ?? 1, facing: char.facing ?? 1 as 1 | -1};
   const points = char.motion ?? [];
   if (!points.length || frame < points[0].frame) return defaults;
@@ -66,6 +66,20 @@ export function rootAt(char: CharacterInstance, frame: number): RootPose {
   return defaults;
 }
 
+export function rootAt(char: CharacterInstance,frame:number):RootPose {
+  const root=rootBaseAt(char,frame);
+  const moves=(char.behaviors??[]).filter(b=>b.type==='moveTo').sort((a,b)=>a.from-b.from);
+  let committedX=0,committedY=0;
+  for(const move of moves){
+    if(frame<move.from)break;
+    const from=rootBaseAt(char,move.from);
+    const dx=move.target.x-from.x-committedX;
+    const dy=move.target.y-from.y-committedY;
+    const t=smooth((Math.min(frame,move.to)-move.from)/(move.to-move.from));
+    committedX+=dx*t;committedY+=dy*t;
+  }
+  return {...root,x:root.x+committedX,y:root.y+committedY};
+}
 export function toLocal(world: Point, root: RootPose): Point {
   return {x: (world.x - root.x) / (root.scale * root.facing), y: (world.y - root.y) / root.scale};
 }
@@ -87,6 +101,29 @@ export function contactWeight(interaction: HighFive, frame: number): number {
   return clamp(rise * fall);
 }
 
+
+/** World-space planted stance and deterministic swing: feet do not slide during stance. */
+export function footTargetAt(character:CharacterInstance, frame:number, front:boolean):Point|null {
+  const active=(character.actions??[]).find(a=>(a.name==='run'||a.name==='walk')&&frame>=a.from&&frame<=a.to);
+  if(!active)return null;
+  const period=active.name==='run'?30:48;
+  const offset=front?0:0.5;
+  const phase=(frame-active.from)/period+offset;
+  const cycle=Math.floor(phase),t=phase-cycle,stance=0.60;
+  const at=(index:number):Point=>{
+    const moment=Math.max(active.from,Math.round(active.from+(index-offset)*period));
+    const pose=rootAt(character,moment);
+    const local=front?(pose.facing===1?60:60):(-65);
+    return {x:pose.x+local*pose.scale*pose.facing,y:pose.y-5*pose.scale};
+  };
+  const current=at(cycle);
+  if(t<=stance)return current;
+  const next=at(cycle+1);
+  const blend=smooth((t-stance)/(1-stance));
+  const foot=interpolatePoint(current,next,blend);
+  return {x:foot.x,y:foot.y-28*rootAt(character,frame).scale*Math.sin(Math.PI*blend)};
+}
+
 /** Positions and limbs are returned numerically; they can be tested without Chromium. */
 export function poseAt(
   character: CharacterInstance, asset: CharacterDefinition,
@@ -97,13 +134,20 @@ export function poseAt(
   const walk = actionWeight(character, 'walk', frame);
   const gaitStrength = Math.max(run, walk * 0.55);
   const gait = Math.sin(frame * (run > walk ? 0.42 : 0.25)) * gaitStrength;
+  root.y -= Math.abs(Math.sin(frame * 0.31))*3*gaitStrength;
   const sit = actionWeight(character, 'sit', frame);
   const wave = actionWeight(character, 'wave', frame);
   const reach = actionWeight(character, 'reach', frame);
   const raise = actionWeight(character, 'pawRaise', frame);
   const blink = actionWeight(character, 'blink', frame) ||
     ((frame + (asset.kind === 'human' ? 2 : 47)) % 103 < 4 ? 1 : 0);
-  const tilt = actionWeight(character, 'headTurn', frame) * 12;
+  let tilt = actionWeight(character, 'headTurn', frame) * 12;
+  for(const b of character.behaviors??[])if(b.type==='lookAt'&&frame>=b.from&&frame<=b.to){
+    const angle=Math.atan2(b.target.y-root.y,b.target.x-root.x)*180/Math.PI;
+    const delta=angle-(root.facing===1?0:180);
+    const weight=smooth(Math.min(1,(frame-b.from)/8,(b.to-frame)/8))*(b.strength??1);
+    tilt+=clamp(delta/5,-24,24)*weight;
+  }
   const tail = Math.sin(frame * 0.32) * (actionWeight(character, 'tailWag', frame) || 0.25);
   let rightArm: JointChain;
   let leftArm: JointChain;
@@ -122,20 +166,39 @@ export function poseAt(
     const neutral = {x: 73 + gait * 20, y: -116};
     const reaching = {x: 176, y: -211};
     const destination = interpolatePoint(interpolatePoint(neutral,wavingEnd,wave),reaching,reach);
-    const point = highFive ? interpolatePoint(destination,highFive.target,highFive.weight) : destination;
+    let point = highFive ? interpolatePoint(destination,highFive.target,highFive.weight) : destination;
+    for(const b of character.behaviors??[])if(b.type==='reachTo'&&frame>=b.from&&frame<=b.to){
+      const w=smooth(Math.min(1,(frame-b.from)/8,(b.to-frame)/8))*(b.strength??1);
+      point=interpolatePoint(point,toLocal(b.target,root),w);
+    }
     rightArm = solveIK(shoulder,point,101,103,-1);
     const leftShoulder = {x:-39,y:-219};
     leftArm = solveIK(leftShoulder,{x:-67-gait*18,y:-115},99,102,1);
-    frontLeg = solveIK({x:27,y:-108},{x:27+gait*35,y:-5},85,88,1);
-    backLeg = solveIK({x:-27,y:-108},{x:-27-gait*35,y:-5},85,88,-1);
+    const forwardPlant=footTargetAt(character,frame,true);
+    const backPlant=footTargetAt(character,frame,false);
+    const frontDefault={x:27+gait*35,y:-5};
+    const backDefault={x:-27-gait*35,y:-5};
+    const frontTarget=forwardPlant?interpolatePoint(frontDefault,toLocal(forwardPlant,root),gaitStrength):frontDefault;
+    const backTarget=backPlant?interpolatePoint(backDefault,toLocal(backPlant,root),gaitStrength):backDefault;
+    frontLeg = solveIK({x:27,y:-108},frontTarget,85,88,1);
+    backLeg = solveIK({x:-27,y:-108},backTarget,85,88,-1);
   } else {
     const frontShoulder = {x:66,y:-110};
     const neutral = {x:85 + gait*27,y:-11};
     const lifted = {x:210,y:-137};
     const destination = interpolatePoint(neutral,lifted,raise);
-    const point = highFive ? interpolatePoint(destination,highFive.target,highFive.weight) : destination;
-    frontLeg = solveIK(frontShoulder,point,115,115,-1);
-    backLeg = solveIK({x:-65,y:-105},{x:-83-gait*28,y:-5},95,92,1);
+    let point = highFive ? interpolatePoint(destination,highFive.target,highFive.weight) : destination;
+    for(const b of character.behaviors??[])if(b.type==='reachTo'&&frame>=b.from&&frame<=b.to){
+      const w=smooth(Math.min(1,(frame-b.from)/8,(b.to-frame)/8))*(b.strength??1);
+      point=interpolatePoint(point,toLocal(b.target,root),w);
+    }
+    const frontPlant=footTargetAt(character,frame,true);
+    const backPlant=footTargetAt(character,frame,false);
+    const neutralFront=frontPlant ? interpolatePoint(point,toLocal(frontPlant,root),gaitStrength*(1-(highFive?.weight??0))*(1-raise)) : point;
+    frontLeg = solveIK(frontShoulder,neutralFront,115,115,-1);
+    const backDefault={x:-83-gait*28,y:-5};
+    const backTarget=backPlant?interpolatePoint(backDefault,toLocal(backPlant,root),gaitStrength*(1-sit)):backDefault;
+    backLeg = solveIK({x:-65,y:-105},backTarget,95,92,1);
     rightArm = frontLeg;
     leftArm = solveIK({x:45,y:-103},{x:45-gait*25,y:-5},96,99,1);
   }

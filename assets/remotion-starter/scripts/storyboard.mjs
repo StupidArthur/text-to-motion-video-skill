@@ -12,7 +12,16 @@ let start = 0;
 const saved = [];
 for (const scene of spec.scenes) {
   const last = Math.max(0, scene.durationFrames - 1);
-  const candidates = [0, Math.floor(last / 2), last];
+  // Sample dramaturgically important instants, not just arbitrary thirds.
+  const candidates = [0, Math.floor(last / 2), last,
+    ...(scene.interactions ?? []).flatMap(e => [e.frame - 1, e.frame, e.frame + (e.holdFrames ?? 0)]),
+    ...(scene.attachments ?? []).flatMap(a => [a.from, a.to-1, a.to, a.releaseEnd ?? a.to]),
+    ...(scene.characters ?? []).flatMap(c => [
+      ...(c.actions ?? []).flatMap(a => [a.from+Math.min(9,Math.floor((a.to-a.from)/2)),a.to]),
+      ...(c.jointActions ?? []).flatMap(a=>[a.from+Math.min(8,Math.floor((a.to-a.from)/2)),a.to]),
+      ...(c.behaviors ?? []).flatMap(a=>[a.from,a.to]),
+    ]),
+  ].filter(f=>Number.isInteger(f) && f>=0 && f<=last);
   const uniqueFrames = [...new Set(candidates)];
   for (const relativeFrame of uniqueFrames) {
     const globalFrame = start + relativeFrame;

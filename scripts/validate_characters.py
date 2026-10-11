@@ -7,7 +7,7 @@ ACTIONS = {'idle','walk','run','wave','sit','reach','pawRaise','blink','headTurn
 def number(value):
     return type(value) in (int,float) and __import__('math').isfinite(value)
 
-def check_v2(ch, doc):
+def check_v2(ch, doc, video_path=None):
     assets = doc.get('characterAssets', [])
     if not isinstance(assets,list):
         ch.error('$.characterAssets','must be a list');return
@@ -15,11 +15,11 @@ def check_v2(ch, doc):
     for i, asset in enumerate(assets):
         loc = f'$.characterAssets[{i}]'
         if not isinstance(asset,dict):ch.error(loc,'object required');continue
-        if set(asset)-{'id','kind','colors'}:ch.error(loc,'unsupported fields')
+        if set(asset)-{'id','kind','colors','rig'}:ch.error(loc,'unsupported fields')
         name = asset.get('id')
         if not isinstance(name,str) or not name:ch.error(loc,'invalid id');continue
         if name in names:ch.error(loc,'duplicate asset id')
-        if asset.get('kind') not in ('human','dog'):ch.error(loc,'kind must be human or dog')
+        if asset.get('kind') not in ('human','dog','custom'):ch.error(loc,'kind must be human or dog')
         names[name]=asset.get('kind')
         colors = asset.get('colors',{})
         if not isinstance(colors,dict) or any(k not in ('body','skin','accent','outline') or not isinstance(v,str) for k,v in colors.items()):ch.error(loc,'invalid colors')
@@ -33,7 +33,7 @@ def check_v2(ch, doc):
         for ci,char in enumerate(characters):
             where=f'{loc}.characters[{ci}]'
             if not isinstance(char,dict):ch.error(where,'object required');continue
-            if set(char)-{'id','asset','x','y','scale','facing','motion','actions'}:ch.error(where,'unsupported fields')
+            if set(char)-{'id','asset','x','y','scale','facing','motion','actions','jointActions','behaviors'}:ch.error(where,'unsupported fields')
             cid=char.get('id')
             if not isinstance(cid,str) or not cid:ch.error(where,'invalid id');continue
             if cid in ids:ch.error(where,'duplicate character id')
@@ -112,3 +112,6 @@ def check_v2(ch, doc):
             else:last=fr
             for prop in ('x','y','zoom'):
                 if prop in key and (not number(key[prop]) or (prop=='zoom' and key[prop]<=0)):ch.error(cw,f'invalid {prop}')
+
+    from validate_rigged import check_advanced
+    check_advanced(ch, doc, video_path)

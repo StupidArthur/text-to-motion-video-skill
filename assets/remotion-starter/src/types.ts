@@ -70,6 +70,8 @@ export type Scene = {
   characters?: CharacterInstance[];
   interactions?: HighFive[];
   camera?: CameraFrame[];
+  props?: PropInstance[];
+  attachments?: Attachment[];
 };
 
 export type VideoSpec = {
@@ -83,15 +85,17 @@ export type VideoSpec = {
   };
   scenes: Scene[];
   characterAssets?: CharacterDefinition[];
+  propAssets?: PropAsset[];
 };
 
 /** V2 character animation. V1 documents without these fields still render unchanged. */
 export type Point = {x: number; y: number};
-export type CharacterKind = 'human' | 'dog';
+export type CharacterKind = 'human' | 'dog' | 'custom';
 export type CharacterDefinition = {
   id: string;
   kind: CharacterKind;
   colors?: {body?: string; skin?: string; accent?: string; outline?: string};
+  rig?: CharacterRig;
 };
 export type CharacterKeyframe = {frame: number; x: number; y: number; scale?: number; facing?: 1 | -1};
 export type CharacterActionName = 'idle' | 'walk' | 'run' | 'wave' | 'sit' | 'reach' | 'pawRaise' | 'blink' | 'headTurn' | 'tailWag';
@@ -105,6 +109,8 @@ export type CharacterInstance = {
   facing?: 1 | -1;
   motion?: CharacterKeyframe[];
   actions?: CharacterAction[];
+  jointActions?: JointAction[];
+  behaviors?: CharacterBehavior[];
 };
 export type HighFive = {
   id: string;
@@ -115,3 +121,26 @@ export type HighFive = {
   holdFrames?: number;
 };
 export type CameraFrame = {frame: number; x?: number; y?: number; zoom?: number};
+
+/** Fully declarative, parented rig for custom human, animal and prop-like sprites. */
+export type RigVisual =
+  | {type:'path'; d:string; fill:string; stroke?:string; strokeWidth?:number}
+  | {type:'ellipse'; cx:number; cy:number; rx:number; ry:number; fill:string}
+  | {type:'rect'; x:number; y:number; width:number; height:number; fill:string; radius?:number}
+  | {type:'svg'; file:string; x:number; y:number; width:number; height:number};
+export type RigBone = {
+  id:string; parent?:string; pivot:Point; visual?:RigVisual;
+  anchors?:Record<string,Point>; layer?:number;
+};
+export type IKChain = {id:string; upper:string; lower:string; effector:string; bend?:1|-1};
+export type CharacterRig = {bones:RigBone[]; ikChains?:IKChain[]};
+export type JointKey = {frame:number; angle:number};
+export type JointAction = {name:string; from:number; to:number; strength?:number;
+  joints:Record<string,JointKey[]>; fadeFrames?:number};
+export type CharacterBehavior = {type:'lookAt'|'reachTo'|'moveTo'; from:number; to:number;
+  target:Point; hand?:'right'|'left'; strength?:number};
+export type PropAsset = {id:string; visual:RigVisual};
+export type PropInstance = {id:string; asset:string; x:number; y:number; scale?:number;
+  rotation?:number; layer?:'back'|'front'};
+export type Attachment = {id:string; prop:string; character:string; anchor:string;
+  from:number; to:number; offset?:Point; releaseTo?:Point; releaseEnd?:number};

@@ -1,0 +1,342 @@
+{
+  "meta": {
+    "title": "Custom rig: robot, puppy and ball",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#C7F3ED"
+  },
+  "characterAssets": [
+    {
+      "id": "robot",
+      "kind": "custom",
+      "rig": {
+        "bones": [
+          {
+            "id": "root",
+            "pivot": {
+              "x": 0,
+              "y": 0
+            },
+            "visual": {
+              "type": "path",
+              "d": "M-50,-60 L-70,-205 Q-55,-240 0,-230 Q55,-240 70,-205 L50,-60 Z",
+              "fill": "#607BDD",
+              "stroke": "#34435B",
+              "strokeWidth": 5
+            },
+            "layer": 3
+          },
+          {
+            "id": "leftLeg",
+            "parent": "root",
+            "pivot": {
+              "x": -35,
+              "y": -55
+            },
+            "visual": {
+              "type": "rect",
+              "x": -16,
+              "y": 0,
+              "width": 32,
+              "height": 60,
+              "fill": "#34435B",
+              "radius": 12
+            },
+            "layer": 0
+          },
+          {
+            "id": "rightLeg",
+            "parent": "root",
+            "pivot": {
+              "x": 35,
+              "y": -55
+            },
+            "visual": {
+              "type": "rect",
+              "x": -16,
+              "y": 0,
+              "width": 32,
+              "height": 60,
+              "fill": "#34435B",
+              "radius": 12
+            },
+            "layer": 1
+          },
+          {
+            "id": "tail",
+            "parent": "root",
+            "pivot": {
+              "x": -55,
+              "y": -180
+            },
+            "visual": {
+              "type": "path",
+              "d": "M0,0 Q-60,-15 -100,-95",
+              "fill": "none",
+              "stroke": "#607BDD",
+              "strokeWidth": 20
+            },
+            "layer": 2
+          },
+          {
+            "id": "upperArm",
+            "parent": "root",
+            "pivot": {
+              "x": 45,
+              "y": -190
+            },
+            "visual": {
+              "type": "rect",
+              "x": 0,
+              "y": -14,
+              "width": 94,
+              "height": 28,
+              "fill": "#FFD39B",
+              "radius": 14
+            },
+            "layer": 4
+          },
+          {
+            "id": "forearm",
+            "parent": "upperArm",
+            "pivot": {
+              "x": 94,
+              "y": 0
+            },
+            "visual": {
+              "type": "rect",
+              "x": 0,
+              "y": -13,
+              "width": 95,
+              "height": 26,
+              "fill": "#FFD39B",
+              "radius": 13
+            },
+            "anchors": {
+              "grip": {
+                "x": 90,
+                "y": 0
+              }
+            },
+            "layer": 5
+          },
+          {
+            "id": "head",
+            "parent": "root",
+            "pivot": {
+              "x": 0,
+              "y": -290
+            },
+            "visual": {
+              "type": "svg",
+              "file": "robot-face.svg",
+              "x": -64,
+              "y": -64,
+              "width": 128,
+              "height": 128
+            },
+            "anchors": {
+              "eyes": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            "layer": 6
+          }
+        ],
+        "ikChains": [
+          {
+            "id": "rightArm",
+            "upper": "upperArm",
+            "lower": "forearm",
+            "effector": "forearm.grip",
+            "bend": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "dog",
+      "kind": "dog",
+      "colors": {
+        "body": "#CC986B",
+        "skin": "#F2D0A4",
+        "accent": "#7F5B3E"
+      }
+    }
+  ],
+  "propAssets": [
+    {
+      "id": "star",
+      "visual": {
+        "type": "path",
+        "d": "M0,-30 L9,-9 30,-9 13,4 20,27 0,14 -20,27 -13,4 -30,-9 -9,-9 Z",
+        "fill": "#F6CF47"
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "meeting",
+      "durationFrames": 240,
+      "background": "#C7F3ED",
+      "elements": [
+        {
+          "id": "ground",
+          "type": "rect",
+          "x": 0,
+          "y": 800,
+          "width": 1920,
+          "height": 280,
+          "fill": "#95D9A2"
+        },
+        {
+          "id": "header",
+          "type": "text",
+          "x": 130,
+          "y": 100,
+          "width": 1650,
+          "height": 125,
+          "text": "自定义 SVG 角色骨骼 + 道具交互",
+          "fontSize": 68,
+          "fill": "#34435B"
+        }
+      ],
+      "characters": [
+        {
+          "id": "robot1",
+          "asset": "robot",
+          "x": 800,
+          "y": 800,
+          "scale": 1.0,
+          "jointActions": [
+            {
+              "name": "wag",
+              "from": 5,
+              "to": 210,
+              "joints": {
+                "tail": [
+                  {
+                    "frame": 0,
+                    "angle": -13
+                  },
+                  {
+                    "frame": 20,
+                    "angle": 21
+                  },
+                  {
+                    "frame": 40,
+                    "angle": -13
+                  },
+                  {
+                    "frame": 60,
+                    "angle": 21
+                  },
+                  {
+                    "frame": 85,
+                    "angle": 0
+                  }
+                ]
+              }
+            }
+          ],
+          "behaviors": [
+            {
+              "type": "lookAt",
+              "from": 8,
+              "to": 225,
+              "target": {
+                "x": 1200,
+                "y": 590
+              }
+            },
+            {
+              "type": "reachTo",
+              "from": 56,
+              "to": 220,
+              "target": {
+                "x": 980,
+                "y": 575
+              }
+            }
+          ]
+        },
+        {
+          "id": "dog1",
+          "asset": "dog",
+          "x": 1230,
+          "y": 800,
+          "scale": 1.0,
+          "facing": -1,
+          "actions": [
+            {
+              "name": "tailWag",
+              "from": 1,
+              "to": 220
+            },
+            {
+              "name": "pawRaise",
+              "from": 66,
+              "to": 188
+            }
+          ]
+        }
+      ],
+      "interactions": [
+        {
+          "id": "high-five",
+          "type": "highFive",
+          "actors": [
+            "robot1",
+            "dog1"
+          ],
+          "frame": 100,
+          "holdFrames": 12,
+          "target": {
+            "x": 1010,
+            "y": 615
+          }
+        }
+      ],
+      "props": [
+        {
+          "id": "spark",
+          "asset": "star",
+          "x": 1010,
+          "y": 615,
+          "layer": "front"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "hold-star",
+          "prop": "spark",
+          "character": "robot1",
+          "anchor": "forearm.grip",
+          "from": 135,
+          "to": 175,
+          "releaseTo": {
+            "x": 1280,
+            "y": 560
+          },
+          "releaseEnd": 225
+        }
+      ],
+      "camera": [
+        {
+          "frame": 0,
+          "x": 960,
+          "y": 540,
+          "zoom": 1
+        },
+        {
+          "frame": 239,
+          "x": 975,
+          "y": 535,
+          "zoom": 1.1
+        }
+      ]
+    }
+  ]
+}

@@ -160,3 +160,19 @@ puppy characters. This is not a photorealistic video model or a general importer
 for arbitrary PNG/video/Lottie rigs. MP4 interactions are scripted, not
 interactive with the viewer at playback time. Full 2D rig import, user-defined
 skeletons, automatic lip sync and physics require subsequent features.
+
+## V2.1 — full 2D articulated stories with imported SVG parts and props
+
+**This section supersedes previous V2 scope descriptions:** the bundled Skill now also implements *declarative custom bone rigs*, layer-specific SVG images, hierarchical joint transforms, weighted local joint tracks, generic two-bone IK, root moveTo/head lookAt/reachTo behaviors, deterministic planted-stance motion for built-in walkers, world-anchor prop pickup/release, and semantic storyboard frames. It does **not** promise photorealistic 3D, arbitrary skinned skeleton binary imports, collision physics or clickable MP4 players.
+
+Workflow for complex character videos:
+
+1. Ask the user for the story beats, number/kind of characters, dialogue, visual style, duration, aspect ratio and any **optional** reference/part SVG/audio files. When no art is provided, make stylized SVG part assets in `public/` yourself (or compose path/rect/ellipse bodies in the JSON).
+2. Create a character bible for each actor: colors, proportions, species, named body parts, anchors, facial expressions. Reuse assets across scenes. Author characters using `characterAssets[].kind='custom'`, bones and `ikChains` according to `references/SCENE_DSL.md` when default human/dog does not suffice.
+3. Split story into shots. For each character write ordered root `motion` plus `jointActions` with action-local keyed angles. Use the builtin human/dog `actions` when appropriate; add semantic `behaviors` only if supported.
+4. For multi-actor touches/handshakes/high-fives define reachable world targets, contact frames and the correct hand/paw anchor; verify using numeric IK tests. Do not animate just a full-body flat SVG if articulated motion is requested.
+5. For held objects define `propAssets`, scene `props` and `attachments` with attach/detach intervals. Account for the possibility of a snap when the object is picked up.
+6. Run schema tests and storyboard extraction at every beat and contact frame. **Inspect actual rasterized keyframes if your agent has image viewing.** If only text-based checks are possible, report the limitation.
+7. Render with Remotion, verify MP4 with `ffprobe`, retain editable project. If npm/browser is unavailable, deliver the correct project and explicit blocker rather than claim successful video generation.
+
+Commands: `python3 scripts/test_advanced.py` from Skill root; inside starter run `npm run test:rig`, `npm run demo:custom`, `npm run storyboard`, `npm run render`. See the full custom-rig demo at `examples/custom-rig/`. Each unsupported request (3D, advanced cloth, arbitrary body mesh retargeting) requires a deliberate new capability; do not invent existing support.

@@ -1,0 +1,63 @@
+name: Validate and render character demos
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        demo: [v2, custom]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test schema and V1/V2 backward compatibility
+        run: |
+          python3 scripts/test_skill.py
+          python3 scripts/test_v2.py
+          python3 scripts/test_advanced.py
+      - name: Install JavaScript dependencies
+        working-directory: assets/remotion-starter
+        run: npm install --no-audit --no-fund
+      - name: Validate TypeScript and deterministic animations
+        working-directory: assets/remotion-starter
+        run: |
+          npm run typecheck
+          npm run test:rig
+      - name: Switch sample and validate scene
+        working-directory: assets/remotion-starter
+        run: |
+          npm run demo:${{ matrix.demo }}
+          python3 ../../scripts/validate_scene.py video.json
+      - name: Ensure headless rendering browser
+        working-directory: assets/remotion-starter
+        run: npx remotion browser ensure
+      - name: Render storyboard and H.264 MP4
+        working-directory: assets/remotion-starter
+        run: |
+          npm run storyboard
+          npm run render
+          python3 ../../scripts/check_video.py video.json out/video.mp4
+      - name: Upload rendered frames and MP4 for visual inspection
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: text-to-motion-${{ matrix.demo }}
+          path: |
+            assets/remotion-starter/out/storyboard/*.png
+            assets/remotion-starter/out/video.mp4
+          if-no-files-found: warn
+          retention-days: 7

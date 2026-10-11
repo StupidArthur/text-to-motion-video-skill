@@ -2,6 +2,8 @@ import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {animationAt} from './animation';
 import {DrawCharacter} from './Characters';
+import {AssetVisual} from './AssetVisual';
+import {propPlacementAt} from './props';
 import {mix, smooth} from './rig';
 import type {Scene, VideoElement, VideoSpec} from './types';
 
@@ -87,16 +89,27 @@ const SceneFrame: React.FC<{scene: Scene; spec: VideoSpec}> = ({scene, spec}) =>
   const cameraY = interpolated('y',height/2);
   const transform = `translate(${width/2} ${height/2}) scale(${zoom}) translate(${-cameraX} ${-cameraY})`;
   const assets = new Map((spec.characterAssets ?? []).map(asset=>[asset.id,asset]));
+  const propAssets = new Map((spec.propAssets ?? []).map(asset=>[asset.id,asset]));
+  const renderProps=(layer:'front'|'back')=>(scene.props??[]).filter(p=>(p.layer??'front')===layer).map(p=>{
+    const asset=propAssets.get(p.asset);
+    if(!asset)return null;
+    const place=propPlacementAt(p,scene,spec.characterAssets??[],frame);
+    return <g key={p.id} transform={`translate(${place.x} ${place.y}) rotate(${p.rotation??0}) scale(${p.scale??1})`}>
+      <AssetVisual visual={asset.visual}/>
+    </g>;
+  });
   return <AbsoluteFill style={{backgroundColor: scene.background ?? spec.meta.background ?? '#090F1D'}}>
     <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet" style={{display: 'block', overflow: 'hidden'}}>
       <g transform={transform}>
         {scene.elements.map((element) => <AnimatedElement key={element.id} element={element} frame={frame} />)}
+        {renderProps('back')}
         {(scene.characters ?? []).map(character => {
           const asset = assets.get(character.asset);
           return asset ? <DrawCharacter key={character.id} character={character} asset={asset}
             frame={frame} interactions={scene.interactions ?? []}/> : null;
         })}
+        {renderProps('front')}
       </g>
     </svg>
     {scene.audio ? <Audio src={staticFile(scene.audio.file)} volume={scene.audio.volume ?? 1} /> : null}

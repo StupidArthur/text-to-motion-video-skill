@@ -1,6 +1,8 @@
 import React from 'react';
 import type {CharacterDefinition, CharacterInstance, HighFive, Point} from './types';
 import {poseAt} from './rig';
+import {rigFrameAt} from './rig-hierarchy';
+import {AssetVisual} from './AssetVisual';
 import type {JointChain} from './rig';
 
 const LineBone: React.FC<{a: Point; b: Point; color: string; thick: number}> = ({a,b,color,thick}) =>
@@ -17,6 +19,16 @@ export const DrawCharacter: React.FC<{
   frame: number;
   interactions: HighFive[];
 }> = ({character,asset,frame,interactions}) => {
+  if(asset.kind==='custom' && asset.rig){
+    const rig=rigFrameAt(character,asset,frame,interactions);
+    return <g>{asset.rig.bones.map((bone,index)=>({bone,index})).sort((a,b)=>(a.bone.layer??a.index)-(b.bone.layer??b.index)).map(({bone})=>{
+      const pos=rig.bones[bone.id];
+      const {a,b,c,d,e,f}=pos.matrix;
+      return <g key={bone.id} transform={`matrix(${a} ${b} ${c} ${d} ${e} ${f})`}>
+        {bone.visual?<AssetVisual visual={bone.visual}/>:null}
+      </g>;
+    })}</g>;
+  }
   const p = poseAt(character,asset,frame,interactions);
   const {root} = p;
   const body = asset.colors?.body ?? (asset.kind==='human' ? '#8B5CF6' : '#DCA269');

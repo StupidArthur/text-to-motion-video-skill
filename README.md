@@ -84,3 +84,27 @@ or acting performances. The currently implemented rigs are code-generated SVG,
 not a general imported-skeleton format. This package has numerical and structural
 tests; rendering and artistic QA must be performed in an environment with npm
 and a Chromium-compatible browser.
+
+## V2.1: Custom 2D character rigs (current)
+
+Alongside the original V1 graphics and V2 girl/dog demo, the Skill now supports *editable multipart SVG character assets* with user-defined bones, pivot points, named hand/foot anchors, joint action blending, local-to-world IK, deterministic `highFive` contact, built-in gait foot planting, scene props that attach to/release from character anchors, and semantic storyboard sampling. Custom rigs are not photorealistic models or full Spine/Lottie skeletal importers: supply one SVG image per articulated body part and a JSON rig with pivots.
+
+Run validation and demos:
+
+```bash
+# From repository root
+python3 scripts/test_skill.py
+python3 scripts/test_v2.py
+python3 scripts/test_advanced.py
+
+# From the starter
+cd assets/remotion-starter
+npm run test:rig   # deterministic math, IK, frame random access, prop attachment, planted feet
+npm run demo:custom
+python3 ../../scripts/validate_scene.py video.json
+npm install        # network required on first run
+npm run storyboard
+npm run render
+```
+
+`npm run demo:custom` switches the starter JSON to an 8-second robot-and-dog cartoon sample, including imported `robot-face.svg` as an independently movable head. Restore samples with `npm run demo:v2` or `npm run demo:v1`. Example files and docs are under `examples/custom-rig/` and `references/SCENE_DSL.md`. Do not claim the MP4 exists until Remotion successfully renders it and checks are complete.

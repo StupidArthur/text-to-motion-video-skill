@@ -179,3 +179,74 @@ Run `python3 scripts/validate_scene.py assets/remotion-starter/video.json,
 Remotion starter run `npm run test:rig. For rendered evidence, run
 `npm install && npm run storyboard && npm run render.
 These offline checks do not replace visual inspection of an actual rendered frame.
+
+---
+
+# V2.1 — Custom articulated SVG rigs, props and interactions (implemented)
+
+V1 and built-in V2 human/dog character specifications are still accepted. V2.1 adds generic **characterAssets[].kind = "custom"**, declarative nested bones, local joint action tracks, optional imported SVG pieces, two-link IK, scene props with frame-based pickup/release, and cinematic camera tracks. No 3D, realtime player input or photorealistic generation is provided.
+
+## Custom rig example
+
+Each bone contains `id`, optional `parent`, required `pivot:{x,y}` relative to its parent's coordinate system, and an optional `visual`. The parent-less bone is attached to character ground root. Bones support `anchors` (named points relative to that bone), optional `layer` (paint order). A visual can be:
+
+- `path`: `{ "type":"path", "d":"M0,0 L50,0", "fill":"#F00", "stroke":"#222", "strokeWidth":3 }` — static SVG path.
+- `rect`: `{ "type":"rect", "x":0, "y":-15, "width":100, "height":30, "fill":"#FA0", "radius":10 }`.
+- `ellipse`: `{ "type":"ellipse", "cx":0, "cy":0, "rx":40, "ry":50, "fill":"#FA0" }`.
+- `svg`: `{ "type":"svg", "file":"parts/head.svg", "x":-60, "y":-60, "width":120, "height":120 }` — image-backed external SVG part. The actual file must be within the Remotion project's `public/` folder. Individual part files are positioned by their bone, not parsed as arbitrary XML.
+
+Example:
+
+```json
+{
+  "id": "robot", "kind": "custom",
+  "rig": {
+    "bones": [
+      {"id":"torso","pivot":{"x":0,"y":-100}, "visual":{"type":"rect","x":-60,"y":-80,"width":120,"height":160,"fill":"#607BDD"}},
+      {"id":"upper","parent":"torso","pivot":{"x":60,"y":-50},"visual":{"type":"rect","x":0,"y":-10,"width":85,"height":20,"fill":"#FFD39B"}},
+      {"id":"lower","parent":"upper","pivot":{"x":85,"y":0},"anchors":{"hand":{"x":80,"y":0}},"visual":{"type":"rect","x":0,"y":-9,"width":80,"height":18,"fill":"#FFD39B"}}
+    ],
+    "ikChains": [{"id":"rightHand","upper":"upper","lower":"lower","effector":"lower.hand","bend":-1}]
+  }
+}
+```
+
+Joint angles are relative to the **parent bone**. Frame-based local actions (each joint track runs in action-local frames, and is blended by weight in declared order):
+
+```json
+"jointActions": [
+  {"name":"wave","from":10,"to":65,"strength":1,"fadeFrames":8,
+   "joints":{"upper":[{"frame":0,"angle":-10},{"frame":25,"angle":-65},{"frame":55,"angle":-10}]}}
+]
+```
+
+The IK solver targets the named end anchor on the lower bone; the lower bone must be a direct child of the upper bone. An unreachable target is clamped to the chain's geometric reach (also inspect keyframes to avoid implausible poses). Custom rigs should make their default limb axis run from upper pivot to the lower pivot, and from lower pivot to the effector anchor. Parts are separately illustrated with SVG primitive or imported static SVG files, preserving editability.
+
+## Semantic behaviors
+
+Any character can have `behaviors` with `type`, `from`, `to` and `target:{x,y}`, with optional `strength`:
+
+- `moveTo` — smoothly offsets the root toward a world target by the behavior's end frame;
+- `lookAt` — turns the head mildly toward a world target (custom rigs need a bone named `head`);
+- `reachTo` — asks the active arm IK to reach a world point; custom rigs require `ikChains`.
+
+Example: `"behaviors":[{"type":"reachTo","from":70,"to":130,"target":{"x":980,"y":575}}]`. These behaviors are resolved as deterministic frame functions, not simulation.
+
+## Prop assets and attachments
+
+Declare top-level `propAssets:[{"id":"ball","visual":{"type":"ellipse","cx":0,"cy":0,"rx":18,"ry":18,"fill":"#EDC34A"}}]`. Put `props` inside a scene with `{id,asset,x,y,scale?,rotation?,layer?:"back"|"front"}`. Props use the same `visual` types as rig bones.
+
+An attachment period follows a named character anchor: `"attachments":[{"id":"pickup","prop":"ball1","character":"robot1","anchor":"lower.hand","from":100,"to":155,"releaseTo":{"x":1350,"y":700},"releaseEnd":200}]`. Before `from`, the prop is at its base position. During `[from,to)`, it follows the bone's world anchor. After release, it interpolates toward `releaseTo` until `releaseEnd`; if no release target is provided it remains at its last attached position. For built-in human/dog characters, named anchors include `rightHand`, `leftHand`, `paw`, `head`, `root`, `frontFoot`, `backFoot`. For custom rigs use `bone.anchorName` or `bone.origin`.
+
+**Important limitations:** attach at frame `from` snaps to the anchor; place your prop near the hand on that frame or design a pickup movement in advance. Release trajectories are time-eased linear, not real gravity. A prop cannot be bound to two characters at the same time. The renderer does not import skinned mesh, full Spine runtime rigs, or automatically retarget arbitrary external skeletal files. Instead, import a *folder of isolated SVG parts* and define their pivots/bone hierarchy in JSON.
+
+## Contact and gait
+
+Existing `highFive` events can target either built-in people/dogs or a custom rig with a valid `ikChains` definition. The contact point is in scene/world coordinates. For custom rigs each IK chain is eligible for the event; use one contact chain per character for unambiguous contact. Foot planting is a deterministic world-space stance/swing plan for built-in human/dog `walk`/`run` actions. Custom rigs require explicit leg joint tracks for gait; arbitrary ground meshes, collision physics and cloth dynamics are not implied.
+
+## Example and QA
+
+- **Complete custom/asset example:** `examples/custom-rig/video.json` with `examples/custom-rig/public/robot-face.svg`.
+- Switch into the bundled starter using `npm run demo:custom` (copies example JSON and asset), then `npm run test:rig && npm run storyboard && npm run render`.
+- For original scenes use `npm run demo:v1` / `npm run demo:v2`.
+- `npm run storyboard` also samples interaction contact frames, action beats, attach/detach instants, and scene boundaries. Use the text-only checks for structural validation, not visual/aesthetic assessment.
