@@ -108,3 +108,24 @@ npm run render
 ```
 
 `npm run demo:custom` switches the starter JSON to an 8-second robot-and-dog cartoon sample, including imported `robot-face.svg` as an independently movable head. Restore samples with `npm run demo:v2` or `npm run demo:v1`. Example files and docs are under `examples/custom-rig/` and `references/SCENE_DSL.md`. Do not claim the MP4 exists until Remotion successfully renders it and checks are complete.
+
+## V3 — Director storyboard → on-demand art → Remotion (NEW)
+
+For stories/MVs, start with **three structured files** authored by a stronger directing model: `storyboard.json` (frame-level timing, action beats, composition), `visual-bible.json` (style/character continuity and asset requests), and `acceptance.json` (per-shot visible results). A lower-cost local Code Agent builds any missing artwork **on demand** as SVG/PNG/WebP/JPEG and verifies each shot; generic built-in character templates are not required.
+
+See **[`workflows/scripted-production.md`](workflows/scripted-production.md)** and **[`examples/scripted-cottage/`](examples/scripted-cottage/)**. This opt-in workflow does not modify existing V1/V2 rendering behavior.
+
+```bash
+# From Skill root:
+cp -R assets/remotion-starter /tmp/my-remotion
+python3 scripts/production_pipeline.py examples/scripted-cottage \
+  --output /tmp/my-remotion/video.json --copy-assets
+python3 scripts/validate_scene.py /tmp/my-remotion/video.json
+python3 scripts/test_production.py
+cd /tmp/my-remotion
+npm install
+npm run storyboard
+npm run render
+```
+
+Quality assurance uses `scripts/shot_review.py`: run `init` to create a **pending** review form; actual frame screenshots and a reviewer are required before `verify` succeeds. A text-only model cannot truthfully declare visual checks passed. The compiler does not create art itself—your code agent must write files declared by the storyboard; missing files cause a clear error. An example generated SVG person/cottage is provided to exercise the pipeline, not to limit future subjects.

@@ -237,7 +237,7 @@ def validate(document, video_path):
         if not isinstance(scene, dict):
             ch.error(here, "scene must be an object")
             continue
-        scene_unknown = set(scene) - {"id", "durationFrames", "background", "audio", "elements", "characters", "interactions", "camera", "props", "attachments"}
+        scene_unknown = set(scene) - {"id", "durationFrames", "background", "audio", "elements", "characters", "interactions", "camera", "props", "attachments", "layers"}
         if scene_unknown:
             ch.error(here, f"unsupported scene fields: {', '.join(sorted(scene_unknown))}")
         scene_id = scene.get("id")
@@ -267,8 +267,12 @@ def validate(document, video_path):
                 ids.add(el["id"])
             validate_element(ch, el, ep, duration, width if is_int(width) and width > 0 else 1920,
                              height if is_int(height) and height > 0 else 1080)
-        if not elements and not scene.get("characters"):
+        if not elements and not scene.get("characters") and not scene.get("layers"):
             ch.warn(here, "scene contains zero elements and characters (may be intentional)")
+    from validate_shot_layers import check_layers
+    for si, sc in enumerate(scenes):
+        if isinstance(sc, dict) and type(sc.get("durationFrames")) is int and sc["durationFrames"] > 0:
+            check_layers(ch, sc, f"$.scenes[{si}]", video_path.parent)
     from validate_characters import check_v2
     check_v2(ch, document, video_path)
     if is_int(fps) and fps > 0:

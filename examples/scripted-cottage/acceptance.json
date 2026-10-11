@@ -1,0 +1,29 @@
+{
+  "version": 3,
+  "checks": [
+    {
+      "id": "approach-progress",
+      "shotId": "approach",
+      "category": "action",
+      "criterion": "Child moves from left half to within one body width of doorway",
+      "expectedAtFrame": 72,
+      "requiresVisualReview": true
+    },
+    {
+      "id": "door-opens",
+      "shotId": "enter",
+      "category": "action",
+      "criterion": "Door is no longer covering dark doorway at end, child has moved through threshold",
+      "expectedAtFrame": 145,
+      "requiresVisualReview": true
+    },
+    {
+      "id": "character-identity",
+      "shotId": "enter",
+      "category": "continuity",
+      "criterion": "Same red hood, cape, face and boots persist across the hard cut",
+      "expectedAtFrame": 80,
+      "requiresVisualReview": true
+    }
+  ]
+}

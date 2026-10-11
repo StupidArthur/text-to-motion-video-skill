@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "version",
+    "checks"
+  ],
+  "properties": {
+    "version": {
+      "const": 3
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "shotId",
+          "category",
+          "criterion",
+          "expectedAtFrame",
+          "requiresVisualReview"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "shotId": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "category": {
+            "enum": [
+              "action",
+              "visual",
+              "continuity",
+              "technical"
+            ]
+          },
+          "criterion": {
+            "type": "string",
+            "minLength": 12
+          },
+          "expectedAtFrame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "requiresVisualReview": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

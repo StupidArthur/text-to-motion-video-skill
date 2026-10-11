@@ -1,0 +1,33 @@
+{
+  "version": 3,
+  "style": {
+    "description": "Original 2D picture-book twilight, warm wood and deep moss greens; coherent silhouettes and limited outlines"
+  },
+  "characters": [
+    {
+      "id": "redhood",
+      "appearance": "Short child with red wool cape, red hood, black boots, warm brown hair",
+      "palette": "berry red, apricot, charcoal"
+    }
+  ],
+  "assets": [
+    {
+      "id": "forest",
+      "file": "forest.svg",
+      "origin": "generated",
+      "description": "Forest at dusk with distant cottage and dark doorway"
+    },
+    {
+      "id": "girl",
+      "file": "red-hood.svg",
+      "origin": "generated",
+      "description": "Original red-cloaked storybook child with separated silhouette"
+    },
+    {
+      "id": "door",
+      "file": "door.svg",
+      "origin": "generated",
+      "description": "Wooden cabin door with handle"
+    }
+  ]
+}

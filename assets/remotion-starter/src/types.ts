@@ -61,7 +61,13 @@ export type LineElement = BaseElement & {
 export type VideoElement = TextElement | RectElement | CircleElement | LineElement;
 export type AudioRef = {file: string; volume?: number};
 
+export type ShotLayer = {
+  id: string; file: string; assetId?: string; x: number; y: number; width: number; height: number;
+  plane?: 'back'|'front'; motion?: Motion[];
+};
+
 export type Scene = {
+  layers?: ShotLayer[];
   id: string;
   durationFrames: number;
   background?: string;

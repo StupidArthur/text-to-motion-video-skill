@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        demo: [v2, custom]
+        demo: [v2, custom, scripted]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,11 +24,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Test schema and V1/V2 backward compatibility
+      - name: Test V1/V2 backward compatibility and V3 production contracts
         run: |
           python3 scripts/test_skill.py
           python3 scripts/test_v2.py
           python3 scripts/test_advanced.py
+          python3 scripts/test_production.py
       - name: Install JavaScript dependencies
         working-directory: assets/remotion-starter
         run: npm install --no-audit --no-fund

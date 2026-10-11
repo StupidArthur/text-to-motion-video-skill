@@ -1,0 +1,164 @@
+{
+  "version": 3,
+  "meta": {
+    "title": "Scripted Cottage V3 Demo",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#203651"
+  },
+  "shots": [
+    {
+      "id": "approach",
+      "startFrame": 0,
+      "endFrame": 75,
+      "intent": "Little Red approaches the lonely cottage, hesitating at the doorway",
+      "subject": "The cottage door and red-hooded child",
+      "shotType": "wide",
+      "characterIds": [
+        "redhood"
+      ],
+      "beforeState": "Child is far away from cottage",
+      "afterState": "Child is standing close to the doorway",
+      "layers": [
+        {
+          "id": "land",
+          "assetId": "forest",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "plane": "back"
+        },
+        {
+          "id": "girl",
+          "assetId": "girl",
+          "x": 350,
+          "y": 572,
+          "width": 190,
+          "height": 400,
+          "plane": "front",
+          "motion": [
+            {
+              "frame": 0,
+              "dx": 0
+            },
+            {
+              "frame": 73,
+              "dx": 830
+            }
+          ]
+        }
+      ],
+      "beats": [
+        {
+          "atFrame": 0,
+          "action": "Child begins approaching the house"
+        },
+        {
+          "atFrame": 70,
+          "action": "Child reaches threshold"
+        }
+      ]
+    },
+    {
+      "id": "enter",
+      "startFrame": 75,
+      "endFrame": 150,
+      "intent": "The old door opens to reveal an unexpected golden glow; child enters",
+      "subject": "Cabin doorway and changing light",
+      "shotType": "medium",
+      "characterIds": [
+        "redhood"
+      ],
+      "beforeState": "Wood door is closed and child is outside",
+      "afterState": "Door has opened and child has crossed threshold",
+      "layers": [
+        {
+          "id": "land",
+          "assetId": "forest",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "plane": "back"
+        },
+        {
+          "id": "girl",
+          "assetId": "girl",
+          "x": 1170,
+          "y": 572,
+          "width": 190,
+          "height": 400,
+          "plane": "back",
+          "motion": [
+            {
+              "frame": 0,
+              "dx": 0,
+              "opacity": 1
+            },
+            {
+              "frame": 68,
+              "dx": 375,
+              "opacity": 0.15
+            }
+          ]
+        },
+        {
+          "id": "wooddoor",
+          "assetId": "door",
+          "x": 1528,
+          "y": 698,
+          "width": 140,
+          "height": 262,
+          "plane": "front",
+          "motion": [
+            {
+              "frame": 0,
+              "opacity": 1,
+              "scale": 1
+            },
+            {
+              "frame": 25,
+              "opacity": 0.3,
+              "scale": 0.7
+            },
+            {
+              "frame": 70,
+              "opacity": 0,
+              "scale": 0.6
+            }
+          ]
+        }
+      ],
+      "camera": [
+        {
+          "frame": 0,
+          "x": 960,
+          "y": 540,
+          "zoom": 1
+        },
+        {
+          "frame": 74,
+          "x": 1310,
+          "y": 640,
+          "zoom": 1.25
+        }
+      ],
+      "beats": [
+        {
+          "atFrame": 75,
+          "action": "Door begins swinging away from threshold"
+        },
+        {
+          "atFrame": 102,
+          "action": "Child crosses the threshold and begins disappearing into warm interior"
+        },
+        {
+          "atFrame": 142,
+          "action": "Doorway remains open as character disappears"
+        }
+      ]
+    }
+  ]
+}

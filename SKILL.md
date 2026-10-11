@@ -1,6 +1,6 @@
 ---
 name: text-to-motion-video
-description: Generate deterministic explainer, infographic and educational MP4 videos with a text-only coding agent using a JSON scene DSL, React SVG, Remotion, keyframe inspection and automated QA. Use when the user asks to create a video, motion graphics, animated SVG, data explainer, animated subtitles, or programmatic text-to-video; especially when no image/video generation model is available. 通过纯文本 Code Agent 生成科普、信息图、文字动画与 MP4。
+description: Create scripted narrative videos, original SVG scenes, characters, explainer motion graphics and editable MP4 using text-only code agents; supports external director shot scripts, on-demand artwork, explicit acceptance criteria, and Remotion rendering. Use when the user asks to create a video, motion graphics, animated SVG, data explainer, animated subtitles, or programmatic text-to-video; especially when no image/video generation model is available. 通过纯文本 Code Agent 生成科普、信息图、文字动画与 MP4。
 compatibility: Requires a code execution agent, Node.js 20+, npm, Python 3.10+, and the ability to install npm dependencies and render in Chromium. ffprobe is optional for final verification.
 ---
 
@@ -15,7 +15,7 @@ compatibility: Requires a code execution agent, Node.js 20+, npm, Python 3.10+, 
 3. Preserve **editable project sources**, not just `mp4`. Never say a render succeeded before confirming the output exists and checks pass.
 4. **Text-only model** does not mean visual inspection. Run automated structural checks; if screenshots cannot be visually examined by this agent, explicitly state that the visual pass was not performed. Do not pretend to see rendered frames.
 5. No invented narration, music, fonts, image files, or successful tool runs. Use real files in `public/`, or leave the track out. Obtain permission and appropriate rights to use third-party assets.
-6. Keep a consistent design system: maximum 2 font families, 3 main colors plus neutrals, generous safe margins, 1 primary focal point per shot, readable timing.
+6. Respect a consistent director-provided visual bible: fixed character identities, reusable palette/typography rules, safe margins, readable timing, and a deliberate focal point per shot. Do not impose a generic palette over the script.
 
 ## Trigger examples
 
@@ -176,3 +176,31 @@ Workflow for complex character videos:
 7. Render with Remotion, verify MP4 with `ffprobe`, retain editable project. If npm/browser is unavailable, deliver the correct project and explicit blocker rather than claim successful video generation.
 
 Commands: `python3 scripts/test_advanced.py` from Skill root; inside starter run `npm run test:rig`, `npm run demo:custom`, `npm run storyboard`, `npm run render`. See the full custom-rig demo at `examples/custom-rig/`. Each unsupported request (3D, advanced cloth, arbitrary body mesh retargeting) requires a deliberate new capability; do not invent existing support.
+
+## V3 — script-driven production with on-demand artwork (preferred for narrative video)
+
+**Core principle:** the director script determines *what* must be on screen; the local Code Agent decides *how* to draw, compose and animate it. Do **not** use the default human/dog rig as a substitute for a novel character simply because it is convenient. Existing character rigs, SVG primitives and prop libraries are optional implementation tools, not the screenplay.
+
+When handed a high-detail external screenplay, **read `workflows/scripted-production.md` first**. Treat `storyboard.json`, `visual-bible.json` and `acceptance.json` as a contract. The schema files are in `contracts/`. Create additional assets **from the specific shot requirements**, not by enumerating a fixed asset catalog. Preserve asset origin/provenance and stable identities. A non-existent referenced asset is a production error, not a request to invent its existence.
+
+### Mandatory execution sequence
+
+1. **Parse & audit the contract**: shot timeline must be contiguous; each shot has before/after story state, at least one action beat, framing, explicit asset needs and acceptance rules. For full-length pieces, flag monotone shot types and repeated “walking” beats before generating. Ask the director to revise unrealistic shot requirements rather than pretending a low-cost implementation is equivalent.
+2. **Build art on demand**: generate new SVG path groups, layered artwork or other permitted files for the current shot. For a red-hooded child, create the hood, face, cape, hands and boots; for an unknown cabin, create its perspective, doorway, lighting and parts. Keep a canonical style/character definition for shot-to-shot continuity. Do not silently replace novel subjects with generic circles or built-in animals.
+3. **Compile verified resources**: use `scripts/production_pipeline.py` to check contracts/paths/frames and assemble a compatible Remotion `video.json`; new external SVG/PNG/WebP/JPEG layers are rendered by `src/ShotLayers.tsx`. Existing V1/V2 scenes still render unchanged.
+4. **Verify action states**: before render, test timeline/asset geometry; after rendering, capture action-key frames and compare the visible state to the acceptance contract. If a character must open a door and enter a house, merely moving the character towards a static house **fails** the shot. The scene must visibly show the door changing state and the character entering.
+5. **Gate visual QA**: `shot_review.py init` starts **all** checks as pending. Each visual check must have actual screenshot evidence, reviewer identity, and a recorded judgment. If only text capabilities exist, keep the visual requirements pending and explicitly say visual QA was **not** done. Never invent a pass. After approved shots, render the final synchronized video and verify technical metadata.
+6. **Preserve human/strong-model intent**: no stealth script rewrites, no repeated walking filler, no claim of cinema-quality art from SVG-only output, and no false declarations of tool access.
+
+See `examples/scripted-cottage/` for an entirely **newly drawn** red-cloaked character and cottage scene. It does not use a preinstalled “Little Red Riding Hood” asset. The demo is illustrative, not a guarantee of professional picture-book quality.
+
+```bash
+# From Skill root. All 3 contracts and their public/ files already exist in example.
+python3 scripts/production_pipeline.py examples/scripted-cottage \
+  --output assets/remotion-starter/video.json --copy-assets
+python3 scripts/validate_scene.py assets/remotion-starter/video.json
+python3 scripts/test_production.py
+# In assets/remotion-starter: npm install && npm run storyboard && npm run render
+```
+
+**Scope boundary:** user-facing storyboard is the *creative contract*; `video.json` is the *execution artifact*. The compiler presently supports deterministic per-shot layered still image/SVG motion plus V2-compatible scene overlays; it does not auto-create artwork or synthesize photo/video footage. External text-to-image/video tools, semantic vision review and advanced morphing are separate optional integrations, not claimed bundled features.

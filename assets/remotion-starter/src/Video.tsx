@@ -3,6 +3,7 @@ import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remoti
 import {animationAt} from './animation';
 import {DrawCharacter} from './Characters';
 import {AssetVisual} from './AssetVisual';
+import {ShotLayers} from './ShotLayers';
 import {propPlacementAt} from './props';
 import {mix, smooth} from './rig';
 import type {Scene, VideoElement, VideoSpec} from './types';
@@ -102,6 +103,7 @@ const SceneFrame: React.FC<{scene: Scene; spec: VideoSpec}> = ({scene, spec}) =>
     <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet" style={{display: 'block', overflow: 'hidden'}}>
       <g transform={transform}>
+        <ShotLayers layers={scene.layers} frame={frame} plane="back" />
         {scene.elements.map((element) => <AnimatedElement key={element.id} element={element} frame={frame} />)}
         {renderProps('back')}
         {(scene.characters ?? []).map(character => {
@@ -110,6 +112,7 @@ const SceneFrame: React.FC<{scene: Scene; spec: VideoSpec}> = ({scene, spec}) =>
             frame={frame} interactions={scene.interactions ?? []}/> : null;
         })}
         {renderProps('front')}
+        <ShotLayers layers={scene.layers} frame={frame} plane="front" />
       </g>
     </svg>
     {scene.audio ? <Audio src={staticFile(scene.audio.file)} volume={scene.audio.volume ?? 1} /> : null}

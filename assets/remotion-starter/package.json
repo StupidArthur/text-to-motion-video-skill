@@ -14,7 +14,9 @@
     "test:skill": "python3 ../../scripts/test_skill.py && python3 ../../scripts/test_v2.py && python3 ../../scripts/test_advanced.py && npm run test:rig",
     "demo:custom": "node scripts/switch-demo.mjs custom",
     "demo:v1": "node scripts/switch-demo.mjs v1",
-    "demo:v2": "node scripts/switch-demo.mjs v2"
+    "demo:v2": "node scripts/switch-demo.mjs v2",
+    "demo:scripted": "node scripts/switch-demo.mjs scripted",
+    "test:production": "python3 ../../scripts/test_production.py"
   },
   "dependencies": {
     "@remotion/cli": "4.0.528",
